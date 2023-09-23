@@ -1,0 +1,5 @@
+
+
+
+# start
+docker build -t test-nginx . || docker run -d -p 8080:8080 test-nginx
