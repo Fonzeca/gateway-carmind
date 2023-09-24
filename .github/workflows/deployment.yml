@@ -6,7 +6,7 @@ on:
       - dev
 
 env:
-    MAIN_TAG: dev
+  MAIN_TAG: dev
 
 jobs:
   build:
@@ -21,11 +21,11 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD_DEV }}
 
       - name: Build Docker image
-        run: |-
-            docker build \ 
-                --tag "fonzeca/${{github.event.repository.name}}:$MAIN_TAG" \
-                --tag "fonzeca/${{github.event.repository.name}}:$GITHUB_SHA" \
-                .
+        run: |
+          docker build \
+              --tag "fonzeca/${{github.event.repository.name}}:$MAIN_TAG" \
+              --tag "fonzeca/${{github.event.repository.name}}:$GITHUB_SHA" \
+              .
 
       - name: Push Docker image to Docker Hub
         run: docker push fonzeca/${{github.event.repository.name}} --all-tags
