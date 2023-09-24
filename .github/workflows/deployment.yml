@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: Build and push Docker image
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +18,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD_DEV }}
 
       - name: Build Docker image
-        run: docker build -t fonzeca/gateway-carmind:dev .
+        run: docker build -t fonzeca/$GITHUB_REPOSITORY:dev .
 
       - name: Push Docker image to Docker Hub
-        run: docker push fonzeca/gateway-carmind:dev
+        run: docker push fonzeca/$GITHUB_REPOSITORY:dev
