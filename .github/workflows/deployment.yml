@@ -1,0 +1,23 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - dev  # Cambia 'dev' al nombre de tu rama principal
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD_DEV }}
+
+      - name: Build Docker image
+        run: docker build -t fonzeca/gateway-carmind:dev .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push fonzeca/gateway-carmind:dev
