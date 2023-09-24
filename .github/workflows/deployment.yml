@@ -23,9 +23,9 @@ jobs:
       - name: Build Docker image
         run: |-
             docker build \ 
-            --tag "fonzeca/${{github.event.repository.name}}:$MAIN_TAG" \
-            --tag "fonzeca/${{github.event.repository.name}}:$GITHUB_SHA" \
-            .
+                --tag "fonzeca/${{github.event.repository.name}}:$MAIN_TAG" \
+                --tag "fonzeca/${{github.event.repository.name}}:$GITHUB_SHA" \
+                .
 
       - name: Push Docker image to Docker Hub
-        run: docker push fonzeca/${{github.event.repository.name}}:dev
+        run: docker push fonzeca/${{github.event.repository.name}} --all-tags
