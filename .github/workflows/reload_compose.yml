@@ -1,0 +1,16 @@
+name: Ejemplo de GitHub Action
+
+on:
+    workflow_run:
+        workflows: ["Run Tests"]
+        branches: [main]
+        types: 
+        - completed
+
+jobs:
+  reload_compose:
+    name: reload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Paso 2
+        run: echo "Este es el paso 2"
