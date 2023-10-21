@@ -1,12 +1,8 @@
 name: Ejemplo de GitHub Action
 
 on:
-  workflow_run:
-    workflows: ["Docker Build and Push"]
-    branches: [dev]
-    types: 
-      - completed
-
+  workflow_call:
+    
 jobs:
   reload_compose:
     name: reload
