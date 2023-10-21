@@ -5,7 +5,7 @@ on:
     workflows: ["Docker Build and Push"]
     branches: [dev]
     types: 
-    - completed
+      - completed
 
 jobs:
   reload_compose:
