@@ -2,10 +2,10 @@ name: Ejemplo de GitHub Action
 
 on:
   workflow_run:
-      workflows: ["Docker Build and Push"]
-      branches: [dev]
-      types: 
-      - completed
+    workflows: ["Docker Build and Push"]
+    branches: [dev]
+    types: 
+    - completed
 
 jobs:
   reload_compose:
