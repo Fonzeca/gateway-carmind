@@ -20,17 +20,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
 
-      - name: copy file via ssh key
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: $SERVER_IP
-          username: root
-          port: 5292
-          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
-          source: "./docker-compose.yml"
-          target: $PATH_TO_COMPOSE/docker-compose.yml
+      - name: Copy Docker Compose file
+        run: scp -P 5292 ./docker-compose.yml root@${{env.SERVER_IP}}:${{env.PATH_TO_COMPOSE}}/docker-compose.yml
 
       - name: SSH into server and run Docker Compose commands
         run: |
-          ssh -P 5292 root@$SERVER_IP 'cd $PATH_TO_COMPOSE && docker-compose up -d'
+          ssh -P 5292 root@${{env.SERVER_IP}} 'cd ${{env.PATH_TO_COMPOSE}} && docker-compose up -d'
     
