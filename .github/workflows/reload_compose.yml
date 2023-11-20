@@ -21,8 +21,8 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
 
       - name: Copy Docker Compose file
-        run: scp -i ${{ secrets.SSH_PRIVATE_KEY_DEV }} ./docker-compose.yml root@$SERVER_IP:$PATH_TO_COMPOSE/docker-compose.yml
+        run: scp ./docker-compose.yml root@$SERVER_IP:$PATH_TO_COMPOSE/docker-compose.yml
       - name: SSH into server and run Docker Compose commands
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY_DEV }} root@$SERVER_IP 'cd $PATH_TO_COMPOSE && docker-compose up -d'
+          ssh root@$SERVER_IP 'cd $PATH_TO_COMPOSE && docker-compose up -d'
     
