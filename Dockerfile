@@ -14,7 +14,7 @@ COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY scripts /usr/local/openresty/nginx/scripts
 
 # Expón el puerto en el que escucha OpenResty
-EXPOSE 8080
+EXPOSE 80
 
 # Inicia OpenResty cuando se inicie el contenedor
 CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]

@@ -1,0 +1,11 @@
+version: "2"
+services:
+    gateway-carmind:
+      image: fonzeca/gateway-carmind:dev
+      ports:
+        - "80:80"
+      networks:
+        - carmind
+
+networks:
+  carmind:

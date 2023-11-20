@@ -1,12 +1,28 @@
-name: Ejemplo de GitHub Action
+name: Ejecutar docker-compose
 
 on:
   workflow_call:
+
+env:
+  SERVER_IP: 66.97.44.3
+  PATH_TO_COMPOSE: /home/root/carmind/${{github.event.repository.name}}
     
 jobs:
-  reload_compose:
-    name: reload
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest  # Puedes elegir el sistema operativo que prefieras
+
     steps:
-      - name: Paso 2
-        run: echo "Este es el paso 2"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSHSSH_PRIVATE_KEY_DEV_PRIVATE_KEY }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
+
+      - name: Copy Docker Compose file
+        run: scp -i ${{ secrets.SSH_PRIVATE_KEY_DEV }} ./docker-compose.yml root@$SERVER_IP:$PATH_TO_COMPOSE/docker-compose.yml
+      - name: SSH into server and run Docker Compose commands
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY_DEV }} root@$SERVER_IP 'cd $PATH_TO_COMPOSE && docker-compose up -d'
+    
