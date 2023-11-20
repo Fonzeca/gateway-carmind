@@ -5,7 +5,7 @@ on:
 
 env:
   SERVER_IP: 66.97.44.3
-  PATH_TO_COMPOSE: /home/root/carmind/${{github.event.repository.name}}
+  PATH_TO_COMPOSE: /root/carmind/${{github.event.repository.name}}
     
 jobs:
   deploy:
@@ -20,7 +20,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
 
-      - name: copy file via ssh key
+      - name: Copy file via ssh key
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ env.SERVER_IP }}
@@ -28,9 +28,16 @@ jobs:
           port: 5292
           key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
           source: "./docker-compose.yml"
-          target: ${{ env.PATH_TO_COMPOSE}}/docker-compose.yml
+          target: ${{ env.PATH_TO_COMPOSE}}
 
-      - name: SSH into server and run Docker Compose commands
-        run: |
-          ssh -P 5292 root@$SERVER_IP 'cd $PATH_TO_COMPOSE && docker-compose up -d'
+      - name: Multiple command
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: root
+          port: 5292
+          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          script: |
+            cd ${{ env.PATH_TO_COMPOSE}}
+            docker-compose up -d
     
