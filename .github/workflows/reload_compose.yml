@@ -18,7 +18,7 @@ jobs:
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSHSSH_PRIVATE_KEY_DEV_PRIVATE_KEY }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
 
       - name: Copy Docker Compose file
         run: scp -i ${{ secrets.SSH_PRIVATE_KEY_DEV }} ./docker-compose.yml root@$SERVER_IP:$PATH_TO_COMPOSE/docker-compose.yml
