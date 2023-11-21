@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
     gateway-carmind:
       image: fonzeca/gateway-carmind:dev
@@ -9,3 +9,5 @@ services:
 
 networks:
   carmind:
+    driver: bridge
+    name: carmind
