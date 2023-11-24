@@ -11,3 +11,4 @@ networks:
   carmind:
     driver: bridge
     name: carmind
+    external: true
