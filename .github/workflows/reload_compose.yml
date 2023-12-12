@@ -1,0 +1,44 @@
+name: Ejecutar docker-compose
+
+on:
+  workflow_call:
+
+env:
+  SERVER_IP: 66.97.44.3
+  PATH_TO_COMPOSE: /root/carmind/${{github.event.repository.name}}
+    
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Puedes elegir el sistema operativo que prefieras
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}  # Asegúrate de almacenar la llave SSH como un secreto en tu repositorio
+
+      - name: Copy file via ssh key
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: root
+          port: 5292
+          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          source: "./docker-compose.yml"
+          target: ${{ env.PATH_TO_COMPOSE}}
+
+      - name: Multiple command
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: root
+          port: 5292
+          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          script: |
+            cd ${{ env.PATH_TO_COMPOSE}}
+            docker compose pull
+            docker compose up -d
+    

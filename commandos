@@ -1,0 +1,5 @@
+
+
+
+# start
+docker build -t test-nginx . && docker stop test-nginx || docker run -d --name test-nginx -p 8080:8080 test-nginx && curl localhost

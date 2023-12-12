@@ -1,0 +1,29 @@
+name: Renew Let's Encrypt Certificate
+
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1"
+
+env:
+  SERVER_IP: 66.97.44.3
+  PATH_TO_COMPOSE: /root/carmind/${{github.event.repository.name}}
+
+jobs:
+  renew_cert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Multiple command
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: root
+          port: 5292
+          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          script: |
+            cd ${{ env.PATH_TO_COMPOSE}}
+            docker compose exec gateway-carmind certbot renew --nginx

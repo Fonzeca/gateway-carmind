@@ -1,0 +1,32 @@
+name: Docker Build and Push
+
+on:
+  workflow_call:
+    inputs:
+      main_tag:
+        type: string
+        description: 'Tag to use for the Docker image'
+        required: true
+        default: 'dev'
+
+jobs:
+  build_and_push:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD_DEV }}
+
+      - name: Build Docker image
+        run: |
+          docker build \
+              --tag "fonzeca/${{github.event.repository.name}}:${{ inputs.main_tag }}" \
+              --tag "fonzeca/${{github.event.repository.name}}:$GITHUB_SHA" \
+              .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push fonzeca/${{github.event.repository.name}} --all-tags
