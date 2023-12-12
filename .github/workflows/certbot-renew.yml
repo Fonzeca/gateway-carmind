@@ -1,9 +1,9 @@
 name: Renew Let's Encrypt Certificate
 
-on:
+on: 
+  workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 1" # Se ejecuta cada lunes a la medianoche (hora UTC)
-  workflow_dispatch: # Disparador manual
+    - cron: "0 0 * * 1"
 
 env:
   SERVER_IP: 66.97.44.3
