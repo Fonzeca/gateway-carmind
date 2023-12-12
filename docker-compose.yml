@@ -4,6 +4,7 @@ services:
       image: fonzeca/gateway-carmind:dev
       ports:
         - "80:80"
+        - "443:443"
       networks:
         - carmind
       volumes:
