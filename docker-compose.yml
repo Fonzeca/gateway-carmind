@@ -6,6 +6,8 @@ services:
         - "80:80"
       networks:
         - carmind
+      volumes:
+      - ./letsencrypt:/etc/letsencrypt
 
 networks:
   carmind:
