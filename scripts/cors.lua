@@ -4,7 +4,12 @@ local method = ngx.req.get_method()
 local origin = ngx.req.get_headers()["Origin"]
 
 -- Verificar si es una llamada OPTIONS y el origin es permitido
-if method == "OPTIONS" and origin == "dev.carmind.com.ar" then
+local authorizedOrigins = {
+    "https://dev.carmind.com.ar",
+    "https://localhost:3000"
+}
+
+if method == "OPTIONS" and contains(authorizedOrigins, origin) then
     ngx.header["Access-Control-Allow-Origin"] = origin
     ngx.header["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
     ngx.header["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
