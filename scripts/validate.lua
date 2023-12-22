@@ -38,8 +38,6 @@ local function proxy_pass(is_public)
     -- Crear una nueva instancia de HTTP client
     local httpc = http.new()
 
-    ngx.log(ngx.STDERR, "new intarnal call to: ", "http://" , service , path)
-
     local headers = ngx.req.get_headers()
 
     --parse map to table
@@ -47,16 +45,6 @@ local function proxy_pass(is_public)
     for k, v in pairs(headers) do
         headers_table[k] = v
     end
-
-    for k, v in pairs(headers_table) do
-        ngx.log(ngx.STDERR, "headers_table: ", k, " ", v)
-    end
-
-    
-
-    -- ngx.log(ngx.STDERR, "headers: ", headers_table)
-
-    ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
 
     -- Realizar la llamada a la API
     local res, err = httpc:request_uri("http://" .. service .. path, {
@@ -72,7 +60,7 @@ local function proxy_pass(is_public)
         return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
 
-    if is_public and res.status == 200 and path == "login" and service == "user-hub" then
+    if is_public and res.status == 200 and path == "/login" and service == "user-hub" then
 
 
         -- Leer el json de la respuesta
@@ -116,8 +104,6 @@ local function table_contains(tbl, x)
     return found
 end
 
--- ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
-ngx.log(ngx.STDERR, "new call to: ", ngx.var.uri)
 
 -- Lista de path admitidos
 local authorizedPaths = {
