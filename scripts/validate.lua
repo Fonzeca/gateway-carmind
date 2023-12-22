@@ -53,7 +53,7 @@ local function proxy_pass(is_public)
 
     -- ngx.log(ngx.STDERR, "headers: ", headers_table)
 
-    ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
+    -- ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
 
     -- Realizar la llamada a la API
     local res, err = httpc:request_uri("http://" .. service .. path, {
@@ -113,6 +113,7 @@ local function table_contains(tbl, x)
     return found
 end
 
+-- ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
 ngx.log(ngx.STDERR, "new call to: ", ngx.var.uri)
 
 -- Lista de path admitidos
