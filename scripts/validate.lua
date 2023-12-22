@@ -63,11 +63,11 @@ end
 
 -- Lista de path admitidos
 local authorizedPaths = {
-    "/api/user-hub/login",
-    "/api/user-hub/register",
+    "/user-hub/login",
+    "/user-hub/register",
 }
 -- Si el path del request esta en una lista blanca , no da error
-if contains(authorizedPaths, ngx.var.uri) then
+if contains(authorizedPaths, ngx.var.service .. "/" .. ngx.var.path) then
     proxy_pass(true)
     return
 end
