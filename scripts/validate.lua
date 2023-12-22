@@ -1,15 +1,44 @@
+
+-- Middleware para manejar las llamadas CORS
+
+local method = ngx.req.get_method()
+local origin = ngx.req.get_headers()["Origin"]
+
+-- Verificar si es una llamada OPTIONS y el origin es permitido
+local authorizedOrigins = {
+    "https://dev.carmind.com.ar",
+    "https://localhost:3000"
+}
+
+if method == "OPTIONS" and contains(authorizedOrigins, origin) then
+    ngx.header["Access-Control-Allow-Origin"] = origin
+    ngx.header["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
+    ngx.header["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    ngx.header["Access-Control-Max-Age"] = "86400" -- 24 horas
+    return ngx.exit(ngx.HTTP_OK)
+end
+
+
+
 local resty_session = require "resty.session"
 local http = require "resty.http"
 
 local function proxy_pass(is_public)
-    -- Obtener la URI del request
-    local service = ngx.var.service
-    local path = ngx.var.path
+
+    local pattern = "/*api/*(?<service>[^/].*[^/])/*(?<path>/.*)"
+    local match, err = ngx.re.match(ngx.var.uri, pattern)
+    if err then
+        ngx.log(ngx.ERR, "Failed to match URI: ", err)
+        return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+    end
+
+    local service = match[1]
+    local path = match[2]
 
     -- Crear una nueva instancia de HTTP client
     local httpc = http.new()
 
-    ngx.log(ngx.INFO, "new call to: ", service, "/", path)
+    ngx.log(ngx.STDERR, "new intarnal call to: ", "http://" , service , path)
 
     -- Realizar la llamada a la API
     local res, err = httpc:request_uri("http://" .. service .. path, {
@@ -68,15 +97,15 @@ local function table_contains(tbl, x)
     return found
 end
 
-
+ngx.log(ngx.STDERR, "new call to: ", ngx.var.uri)
 
 -- Lista de path admitidos
 local authorizedPaths = {
-    "/user-hub/login",
-    "/user-hub/register",
+    "/api/user-hub/login",
+    "/api/user-hub/register",
 }
 -- Si el path del request esta en una lista blanca , no da error
-if table_contains(authorizedPaths, "/" .. ngx.var.service .. "/" .. ngx.var.path) then
+if table_contains(authorizedPaths, ngx.var.uri) then
     proxy_pass(true)
     return
 end
@@ -112,119 +141,5 @@ else
     proxy_pass(false)
 end
 
-
-
-
-
-local function connect_redis()
-    local red = redis:new()
-
-    local redis_host = "127.0.0.11"
-    local redis_port = 6379
-
-    red:set_timeout(1000)
-    red:set_keepalive(10000, 100)
-
-    local ok, err = red:connect(redis_host, redis_port)
-    if not ok then
-        ngx.log(ngx.ERR, "Failed to connect to Redis: ", err)
-        return nil
-    end
-
-    return red
-end
-
-local function add_session_to_redis(session_id, user_json)
-    local red = connect_redis()
-    if not red then
-        return false
-    end
-
-    local username = user_json['username']
-    local admin = user_json['admin']
-    local roles = user_json['roles']
-
-    local res, err = red:hmset('sessions:' .. session_id, 'username', username, 'admin', admin, 'roles', roles)
-    if not res then
-        ngx.log(ngx.ERR, "Failed to add session to Redis: ", err)
-        return false
-    end
-
-    return true
-end
-
---new function
-local function validate_session(cookie_session)
-    local http = require "resty.http"
-    local httpc = http.new()
-
-    local res, err = httpc:request_uri("http://user-hub:5623/validate", {
-        method = "POST", -- o "POST", "PUT", etc., según lo que necesites
-        headers = {
-            ["Content-Type"] = "application/json", -- ajusta los encabezados según tus necesidades
-            ["Cookie"] = "session=" .. cookie_session,
-        },
-        -- body = '{"key": "value"}', -- si necesitas enviar datos en el cuerpo de la solicitud
-    })
-
-    if not res then
-        ngx.status = 500
-        ngx.say("Error en la solicitud REST: ", err)
-        return false
-    end
-
-    -- Puedes manejar la respuesta del servicio REST aquí
-    
-    -- leer el json de la respuesta
-    local json = require "cjson"
-    local data = json.decode(res.body)
-
-    --create session_id
-
-
-
-    add_session_to_redis()
-
-    httpc:close()
-
-    return true
-end
-
-
-
-
-
-if not session_id then
-    -- validamos contra user-hub
-    validate_session(session)
-else
-    -- validamos en redis, y sino en user-hub
-end
-
-
-
-
-
--- Verificar si la sesión está activa en Redis
-local session_active, err = red:get(session_id)
-if err then
-    ngx.log(ngx.ERR, "Error al obtener la sesión de Redis: ", err)
-    return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
-end
-
--- Comprobar si la sesión está activa
-if session_active == ngx.null then
-    ngx.log(ngx.ERR, "La sesión no está activa")
-    return ngx.exit(ngx.HTTP_UNAUTHORIZED)
-end
-
--- La sesión está activa, continuar con la lógica del script...
-
--- Cerrar la conexión a Redis
--- local ok, err = red:close()
--- if not ok then
---     ngx.log(ngx.ERR, "Error al cerrar la conexión a Redis: ", err)
---     return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
--- end
 
 
