@@ -8,6 +8,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
 
 RUN opm get ledgetech/lua-resty-http
 
+RUN opm get bungle/lua-resty-session
+
 # Install Certbot and its Nginx plugin
 RUN apt-get update && apt-get install -y certbot python3-certbot-nginx
 
