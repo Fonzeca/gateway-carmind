@@ -46,6 +46,8 @@ local function proxy_pass(is_public)
         headers = ngx.req.get_headers(), -- Utilizar los mismos encabezados del request original
         body = ngx.req.get_body_data(), -- Utilizar el mismo cuerpo del request original
     })
+    
+    ngx.log(ngx.STDERR, "finish internal call, response: ", res.status)
 
     -- Verificar si hubo un error en la llamada
     if not res then
