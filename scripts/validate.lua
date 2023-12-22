@@ -40,15 +40,26 @@ local function proxy_pass(is_public)
 
     ngx.log(ngx.STDERR, "new intarnal call to: ", "http://" , service , path)
 
-    ngx.log(ngx.STDERR, "headers: ", ngx.req.get_headers())
+    local headers = ngx.req.get_headers()
+
+    --parse map to table
+    local headers_table = {}
+    for k, v in pairs(headers) do
+        headers_table[#headers_table+1] = k
+        headers_table[#headers_table+1] = v
+    end
+
+    
+
+    -- ngx.log(ngx.STDERR, "headers: ", headers_table)
 
     ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
 
     -- Realizar la llamada a la API
     local res, err = httpc:request_uri("http://" .. service .. path, {
         method = ngx.req.get_method(), -- Utilizar el mismo método del request original
-        -- headers = ngx.req.get_headers(), -- Utilizar los mismos encabezados del request original
-        -- body = ngx.req.get_body_data(), -- Utilizar el mismo cuerpo del request original
+        headers = headers_table, -- Utilizar los mismos encabezados del request original
+        body = ngx.req.get_body_data(), -- Utilizar el mismo cuerpo del request original
     })
     
 
