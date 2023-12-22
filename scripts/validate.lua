@@ -45,15 +45,18 @@ local function proxy_pass(is_public)
     --parse map to table
     local headers_table = {}
     for k, v in pairs(headers) do
-        headers_table[#headers_table+1] = k
-        headers_table[#headers_table+1] = v
+        headers_table[k] = v
+    end
+
+    for k, v in pairs(headers_table) do
+        ngx.log(ngx.STDERR, "headers_table: ", k, " ", v)
     end
 
     
 
     -- ngx.log(ngx.STDERR, "headers: ", headers_table)
 
-    -- ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
+    ngx.log(ngx.STDERR, "body: ", ngx.req.get_body_data())
 
     -- Realizar la llamada a la API
     local res, err = httpc:request_uri("http://" .. service .. path, {
