@@ -58,6 +58,15 @@ local function proxy_pass(is_public)
     return ngx.exit(ngx.OK)
 end
 
+local function table_contains(tbl, x)
+    found = false
+    for _, v in pairs(tbl) do
+        if v == x then 
+            found = true 
+        end
+    end
+    return found
+end
 
 
 
@@ -67,7 +76,7 @@ local authorizedPaths = {
     "/user-hub/register",
 }
 -- Si el path del request esta en una lista blanca , no da error
-if contains(authorizedPaths, "/" .. ngx.var.service .. "/" .. ngx.var.path) then
+if table_contains(authorizedPaths, "/" .. ngx.var.service .. "/" .. ngx.var.path) then
     proxy_pass(true)
     return
 end
