@@ -1,4 +1,14 @@
 
+local function table_contains(tbl, x)
+    found = false
+    for _, v in pairs(tbl) do
+        if v == x then 
+            found = true 
+        end
+    end
+    return found
+end
+
 -- Middleware para manejar las llamadas CORS
 
 local method = ngx.req.get_method()
@@ -10,7 +20,7 @@ local authorizedOrigins = {
     "https://localhost:3000"
 }
 
-if method == "OPTIONS" and contains(authorizedOrigins, origin) then
+if method == "OPTIONS" and table_contains(authorizedOrigins, origin) then
     ngx.header["Access-Control-Allow-Origin"] = origin
     ngx.header["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
     ngx.header["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
@@ -92,16 +102,6 @@ local function proxy_pass(is_public)
 
     -- Finalizar la ejecución del script
     return ngx.exit(ngx.OK)
-end
-
-local function table_contains(tbl, x)
-    found = false
-    for _, v in pairs(tbl) do
-        if v == x then 
-            found = true 
-        end
-    end
-    return found
 end
 
 
