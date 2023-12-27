@@ -26,7 +26,7 @@ if table_contains(authorizedOrigins, origin) then
     ngx.header["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     ngx.header["Access-Control-Max-Age"] = "86400" -- 24 horas
     ngx.header["Access-Control-Allow-Credentials"] = "true" -- Allow credentials
-    
+
     if method == "OPTIONS" then
         return ngx.exit(ngx.HTTP_OK)
     end
@@ -83,7 +83,7 @@ local function proxy_pass(is_public)
         local data = json.decode(res.body)
 
         -- Crear una nueva sesión
-        local session, err = resty_session.start({cookie_domain = false, cookie_same_site = "None"})
+        local session, err = resty_session.start({cookie_same_site = (origin == "https://dev.carmind.com.ar" and "Strict" or "None")})
         if not session then
             ngx.log(ngx.ERR, "Failed to create session: ", err)
             return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
