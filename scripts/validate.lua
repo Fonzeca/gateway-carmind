@@ -79,7 +79,7 @@ local function proxy_pass(is_public)
         local data = json.decode(res.body)
 
         -- Crear una nueva sesión
-        local session, err = resty_session.start({cookie_path = "dev.carmind.com.ar"})
+        local session, err = resty_session.start({cookie_domain = "dev.carmind.com.ar"})
         if not session then
             ngx.log(ngx.ERR, "Failed to create session: ", err)
             return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
