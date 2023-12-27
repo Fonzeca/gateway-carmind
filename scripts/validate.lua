@@ -20,13 +20,16 @@ local authorizedOrigins = {
     "https://localhost:3000"
 }
 
-if method == "OPTIONS" and table_contains(authorizedOrigins, origin) then
+if table_contains(authorizedOrigins, origin) then
     ngx.header["Access-Control-Allow-Origin"] = origin
     ngx.header["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
     ngx.header["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     ngx.header["Access-Control-Max-Age"] = "86400" -- 24 horas
     ngx.header["Access-Control-Allow-Credentials"] = "true" -- Allow credentials
-    return ngx.exit(ngx.HTTP_OK)
+    
+    if method == "OPTIONS" then
+        return ngx.exit(ngx.HTTP_OK)
+    end
 end
 
 
