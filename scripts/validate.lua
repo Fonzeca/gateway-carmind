@@ -44,6 +44,7 @@ local function proxy_pass(is_public)
 
     local service = match[1]
     local path = match[2]
+    local origin = ngx.req.get_headers()["Origin"]
 
     -- Crear una nueva instancia de HTTP client
     local httpc = http.new()
@@ -82,6 +83,10 @@ local function proxy_pass(is_public)
         if not session then
             ngx.log(ngx.ERR, "Failed to create session: ", err)
             return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+        end
+
+        if origin == "https://localhost:3000" then
+            session.cookie.domain = "dev.carmind.com.ar"
         end
 
         -- Guardar los datos de usuario en la sesión
@@ -126,8 +131,6 @@ if not exists then
     ngx.log(ngx.ERR, "On open session, not exists: ", err)
     return ngx.exit(ngx.HTTP_UNAUTHORIZED)
 else
-
-
     local username = session:get("username")
     local admin = session:get("admin")
     local roles = session:get("roles")
