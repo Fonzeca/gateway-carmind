@@ -121,6 +121,12 @@ if table_contains(authorizedPaths, ngx.var.uri) then
     return
 end
 
+if ngx.var.uri == "/api/user-hub/logout" then
+    -- Destruir la sesión
+    resty_session.destroy()
+    return ngx.exit(ngx.HTTP_OK)
+end
+
 
 
 local session, err, exists = resty_session.open()
