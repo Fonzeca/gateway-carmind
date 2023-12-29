@@ -114,6 +114,9 @@ end
 local authorizedPaths = {
     "/api/user-hub/login",
     "/api/user-hub/register",
+    "/api/user-hub/pw/recover",
+    "/api/user-hub/pw/validateToken",
+    "/api/user-hub/pw/reset",
 }
 -- Si el path del request esta en una lista blanca , no da error
 if table_contains(authorizedPaths, ngx.var.uri) then
