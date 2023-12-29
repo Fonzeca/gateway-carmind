@@ -128,8 +128,16 @@ if ngx.var.uri == "/api/user-hub/logout" then
 end
 
 
-
 local session, err, exists = resty_session.open()
+
+if ngx.var.uri == "/api/user-hub/validate" then
+    if exists and session:get("username") then
+        -- Setear los headers para el backend
+        return ngx.exit(ngx.HTTP_OK)
+    else
+        return ngx.exit(ngx.HTTP_UNAUTHORIZED)
+    end
+end
 
 
 if not exists then
@@ -147,6 +155,7 @@ else
         resty_session.destroy()
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
+
 
     -- Setear los headers para el backend
     ngx.req.set_header("X-Username", username)
