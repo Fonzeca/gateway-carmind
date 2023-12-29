@@ -123,7 +123,7 @@ end
 
 if ngx.var.uri == "/api/user-hub/logout" then
     -- Destruir la sesión
-    resty_session.destroy()
+    resty_session.logout()
     return ngx.exit(ngx.HTTP_OK)
 end
 
