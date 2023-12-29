@@ -123,7 +123,7 @@ end
 
 if ngx.var.uri == "/api/user-hub/logout" then
     -- Destruir la sesión
-    resty_session.logout()
+    resty_session.logout({cookie_same_site = (origin == "https://dev.carmind.com.ar" and "Strict" or "None")})
     return ngx.exit(ngx.HTTP_OK)
 end
 
