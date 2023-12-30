@@ -62,10 +62,10 @@ local function proxy_pass(is_public)
         headers_table[k] = v
     end
 
-    ngx.log(ngx.STDERR, "full: ", "http://" .. service .. path .. query)
+    ngx.log(ngx.STDERR, "full: ", "http://" .. service .. path .. "?" .. query)
 
     -- Realizar la llamada a la API
-    local res, err = httpc:request_uri("http://" .. service .. path .. query, {
+    local res, err = httpc:request_uri("http://" .. service .. path .. "?" .. query, {
         method = ngx.req.get_method(), -- Utilizar el mismo método del request original
         headers = headers_table, -- Utilizar los mismos encabezados del request original
         body = ngx.req.get_body_data(), -- Utilizar el mismo cuerpo del request original
