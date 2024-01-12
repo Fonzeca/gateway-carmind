@@ -14,12 +14,18 @@ RUN opm get bungle/lua-resty-session
 RUN apt-get update && apt-get install -y certbot python3-certbot-nginx
 
 # Copia tu configuración personalizada de OpenResty al contenedor
-COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY nginx.conf.template /usr/local/openresty/nginx/templates/nginx.conf.template
 
 COPY scripts /usr/local/openresty/nginx/scripts
 
 # Expón el puerto en el que escucha OpenResty
 EXPOSE 80
 
-# Inicia OpenResty cuando se inicie el contenedor
-CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]
+# Copia el script de entrada al contenedor
+COPY entrypoint.sh /entrypoint.sh
+
+# Asegúrate de que el script de entrada tenga permisos de ejecución
+RUN chmod +x /entrypoint.sh
+
+# Configura el script de entrada como el punto de entrada para el contenedor
+ENTRYPOINT ["/entrypoint.sh"]

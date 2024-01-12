@@ -14,11 +14,22 @@ end
 local method = ngx.req.get_method()
 local origin = ngx.req.get_headers()["Origin"]
 
+local originServer = os.getenv("ORIGIN_SERVER")
+
+if not originServer then
+    originServer = "https://dev.carmind.com.ar"
+end
+
 -- Verificar si es una llamada OPTIONS y el origin es permitido
-local authorizedOrigins = {
-    "https://dev.carmind.com.ar",
-    "https://localhost:3000"
-}
+local corsAllowed = os.getenv("CORS_ALLOWED")
+local authorizedOrigins = {}
+
+if corsAllowed then
+    -- Split the string by comma to get individual origins
+    for origin in corsAllowed:gmatch("[^,%s]+") do
+        table.insert(authorizedOrigins, origin)
+    end
+end
 
 if table_contains(authorizedOrigins, origin) then
     ngx.header["Access-Control-Allow-Origin"] = origin
@@ -91,7 +102,7 @@ local function proxy_pass(is_public)
         local data = json.decode(res.body)
 
         -- Crear una nueva sesión
-        local session, err = resty_session.start({cookie_same_site = (origin == "https://dev.carmind.com.ar" and "Strict" or "None")})
+        local session, err = resty_session.start({cookie_same_site = (origin == originServer and "Strict" or "None")})
         if not session then
             ngx.log(ngx.ERR, "Failed to create session: ", err)
             return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
@@ -134,7 +145,7 @@ end
 
 if ngx.var.uri == "/api/user-hub/logout" then
     -- Destruir la sesión
-    resty_session.logout({cookie_same_site = (origin == "https://dev.carmind.com.ar" and "Strict" or "None")})
+    resty_session.logout({cookie_same_site = (origin == originServer and "Strict" or "None")})
     return ngx.exit(ngx.HTTP_OK)
 end
 

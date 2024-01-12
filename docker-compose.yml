@@ -1,6 +1,6 @@
 version: "3"
 services:
-    gateway-carmind:
+  gateway-carmind:
       image: fonzeca/gateway-carmind:dev
       ports:
         - "80:80"
@@ -9,6 +9,8 @@ services:
         - carmind
       volumes:
       - ./letsencrypt:/etc/letsencrypt
+      env_file:
+        - .env
 
 networks:
   carmind:
