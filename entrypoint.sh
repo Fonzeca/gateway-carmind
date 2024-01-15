@@ -11,9 +11,10 @@ run_nginx()
     # Luego, puedes iniciar tu servidor nginx:
     echo "Starting nginx with daemon $DEAMON"
     /usr/local/openresty/bin/openresty -g "daemon $DEAMON;"
+
 }
 
-if [ -d "/etc/letsencrypt" ] && [ "$(ls -A /etc/letsencrypt)" ]; then
+if [ -d "/etc/letsencrypt/live/$SERVER_NAME" ] && [ "$(ls -A /etc/letsencrypt/live/$SERVER_NAME)" ]; then
     echo "Let's Encrypt SSL certificates found in /etc/letsencrypt"
 
     # Run nginx
@@ -37,18 +38,20 @@ else
     run_nginx on
 
     # Run certbot
-    echo "Running certbot with webroot and variables: $EMAIL and $SERVER_NAME"
-    certbot certonly --webroot -w /var/www/certbot --standalone --non-interactive --agree-tos --email $EMAIL --domains $SERVER_NAME
+    echo "Running certbot with webroot and variables: $CERTBOT_EMAIL and $SERVER_NAME"
+    rm /var/www/certbot
+    mkdir /var/www/certbot
+    certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos --email $CERTBOT_EMAIL --domains $SERVER_NAME
 
     # Restore file
     echo "Restoring nginx.conf.template"
     mv /usr/local/openresty/nginx/templates/nginx.conf.template.bak /usr/local/openresty/nginx/templates/nginx.conf.template
 
-    echo "Adding ssl directive to nginx.conf.template"
-    envsubst < /usr/local/openresty/nginx/templates/nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf
-
     # Reload nginx
-    echo "Reloading nginx"
-    /usr/local/openresty/bin/openresty -s reload
+    echo "quit neginx"
+    /usr/local/openresty/bin/openresty -s quit
+
+    echo "run_nginx"
+    run_nginx off
 fi
 
