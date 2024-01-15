@@ -1,13 +1,12 @@
 #!/bin/sh
 
-if [ -d "/etc/letsencrypt" ]; then
+if [ -d "/etc/letsencrypt" ] && [ "$(ls -A /etc/letsencrypt)" ]; then
     echo "Let's Encrypt SSL certificates found in /etc/letsencrypt"
 else
     echo "No Let's Encrypt SSL certificates found in /etc/letsencrypt"
     
     sed -i '/ssl/s/^/#/' /usr/local/openresty/nginx/templates/nginx.conf.template
 fi
-
 
 
 
