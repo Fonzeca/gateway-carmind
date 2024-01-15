@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # function that run nginx
-run_nginx() {
+run_nginx() 
+{
     # Remplaza las variables de entorno en el archivo de configuración de nginx
     echo "Replacing environment variables in nginx configuration file"
     envsubst < /usr/local/openresty/nginx/templates/nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf
@@ -16,7 +17,7 @@ if [ -d "/etc/letsencrypt" ] && [ "$(ls -A /etc/letsencrypt)" ]; then
 
     # Run nginx
     echo "run_nginx"
-    run_nginx();
+    run_nginx
 
 else
     echo "No Let's Encrypt SSL certificates found in /etc/letsencrypt"
@@ -32,7 +33,7 @@ else
 
     # Run nginx 
     echo "run_nginx"
-    run_nginx();
+    run_nginx
 
     # Run certbot
     echo "Running certbot with webroot and variables: $EMAIL and $SERVER_NAME"
