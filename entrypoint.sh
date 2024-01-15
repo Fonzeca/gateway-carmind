@@ -3,13 +3,14 @@
 # function that run nginx
 run_nginx() 
 {
+    DEAMON=$1
     # Remplaza las variables de entorno en el archivo de configuración de nginx
     echo "Replacing environment variables in nginx configuration file"
     envsubst < /usr/local/openresty/nginx/templates/nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf
 
     # Luego, puedes iniciar tu servidor nginx:
-    echo "Starting nginx"
-    /usr/local/openresty/bin/openresty -g "daemon off;"
+    echo "Starting nginx with daemon $DEAMON"
+    /usr/local/openresty/bin/openresty -g "daemon $DEAMON;"
 }
 
 if [ -d "/etc/letsencrypt" ] && [ "$(ls -A /etc/letsencrypt)" ]; then
@@ -17,7 +18,7 @@ if [ -d "/etc/letsencrypt" ] && [ "$(ls -A /etc/letsencrypt)" ]; then
 
     # Run nginx
     echo "run_nginx"
-    run_nginx
+    run_nginx off
 
 else
     echo "No Let's Encrypt SSL certificates found in /etc/letsencrypt"
@@ -33,7 +34,7 @@ else
 
     # Run nginx 
     echo "run_nginx"
-    run_nginx
+    run_nginx on
 
     # Run certbot
     echo "Running certbot with webroot and variables: $EMAIL and $SERVER_NAME"
