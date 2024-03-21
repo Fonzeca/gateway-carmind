@@ -64,7 +64,9 @@ local function proxy_pass(is_public)
     local query = ngx.var.query_string
     local origin = ngx.req.get_headers()["Origin"]
 
-    ngx.var.proxy_uri = service .. path .. (query and "?" .. query or "")
+    ngx.var.proxy_uri = "http://" .. service .. path .. (query and "?" .. query or "")
+
+    ngx.log(ngx.ERR, "Proxying to: ", ngx.var.proxy_uri)
 end
 
 
