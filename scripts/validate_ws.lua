@@ -9,6 +9,8 @@ local function table_contains(tbl, x)
     return found
 end
 
+ngx.log(ngx.ERR, "WEBSOCKET Request URI: ", ngx.var.uri);
+
 -- Middleware para manejar las llamadas CORS
 
 local method = ngx.req.get_method()
