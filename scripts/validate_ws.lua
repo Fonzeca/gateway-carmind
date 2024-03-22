@@ -106,7 +106,7 @@ local session, err, exists = resty_session.open()
 if not exists then
 
     --Verificamos si tiene apikey
-    local apikey = ngx.req.get_headers()["X-Api-Key"]
+    local apikey = ngx.req.get_headers()["x-api-key"]
 
     if not apikey then
         -- Terminar la request con error
