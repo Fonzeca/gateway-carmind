@@ -26,5 +26,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
           script: |
             cd ${{ env.PATH_TO_COMPOSE}}
-            docker compose exec gateway-carmind certbot renew
+            docker compose exec gateway-carmind certbot renew --force-renewal
             docker compose restart

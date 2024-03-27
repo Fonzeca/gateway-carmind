@@ -56,7 +56,22 @@ http {
             set ${DOLLAR}path ${DOLLAR}path;
 
             content_by_lua_file /usr/local/openresty/nginx/scripts/validate.lua;
-            
+        }
+
+        location ~ /*ws/*(?<service>[^/].*[^/])/*(?<path>/.*) {
+            lua_need_request_body on;
+
+            set ${DOLLAR}service ${DOLLAR}service;
+            set ${DOLLAR}path ${DOLLAR}path;
+
+            set ${DOLLAR}proxy_uri "";
+
+            rewrite_by_lua_file /usr/local/openresty/nginx/scripts/validate_ws.lua;
+
+            proxy_set_header Upgrade ${DOLLAR}http_upgrade;
+            proxy_set_header Connection "upgrade"; 
+
+            proxy_pass ${DOLLAR}proxy_uri;
         }
 
         location / {
