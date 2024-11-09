@@ -132,10 +132,9 @@ end
 -- Lista de path admitidos
 local authorizedPaths = {
     "/api/user-hub/login",
-    "/api/user-hub/register",
-    "/api/user-hub/pw/recover",
-    "/api/user-hub/pw/validateToken",
-    "/api/user-hub/pw/reset",
+    "/api/user-hub/password/recover",
+    "/api/user-hub/password/validateToken",
+    "/api/user-hub/password/reset",
 }
 -- Si el path del request esta en una lista blanca , no da error
 if table_contains(authorizedPaths, ngx.var.uri) then
@@ -155,6 +154,9 @@ local session, err, exists = resty_session.open()
 if ngx.var.uri == "/api/user-hub/validate" then
     if exists and session:get("username") then
         -- Setear los headers para el backend
+        ngx.req.set_header("X-Username", session:get("username"))
+        ngx.req.set_header("X-Admin", session:get("admin"))
+        ngx.req.set_header("X-Roles", session:get("roles"))
         return ngx.exit(ngx.HTTP_OK)
     else
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
