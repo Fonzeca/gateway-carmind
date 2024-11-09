@@ -153,10 +153,15 @@ local session, err, exists = resty_session.open()
 
 if ngx.var.uri == "/api/user-hub/validate" then
     if exists and session:get("username") then
-        -- Setear los headers para el backend
-        ngx.req.set_header("X-Username", session:get("username"))
-        ngx.req.set_header("X-Admin", session:get("admin"))
-        ngx.req.set_header("X-Roles", session:get("roles"))
+        local json = require "cjson"
+
+        local resp = {
+            username = session:get("username"),
+            admin = session:get("admin"),
+            roles = session:get("roles"),
+        }
+
+        ngx.print(json.encode(resp))
         return ngx.exit(ngx.HTTP_OK)
     else
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
